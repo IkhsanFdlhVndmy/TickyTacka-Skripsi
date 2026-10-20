@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ab8c7eac73570f4ca34fd979ef9d9a2, type: 3}
+  m_Name: Sounds SO
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: BGM_MainMenu
+    volume: 1
+    mixer: {fileID: 6985874569521803456, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 14b0e5dcf712b9e459d411ff06845452, type: 3}
+  - name: BGM_Game
+    volume: 1
+    mixer: {fileID: 6985874569521803456, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 11f37566ea9571740b433f534a0acaf3, type: 3}
+  - name: SFX_Explosions
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: f792ec80e84df4e4a86f0fccf63b4775, type: 3}
+    - {fileID: 8300000, guid: 420976e3c5d5c63488b7e7284408fb7a, type: 3}
+    - {fileID: 8300000, guid: 9d7ded7144bfe204a98d5fe11bc2064c, type: 3}
+    - {fileID: 8300000, guid: 9c5cd65d390b93d4788bfb872be0aec2, type: 3}
+    - {fileID: 8300000, guid: 0f938224e99c16546bbd2a238abe0d5a, type: 3}
+  - name: SFX_CardHover
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 15631ae2ccfea894aab2b5b18c48c7a3, type: 3}
+  - name: SFX_CardPick
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: df69a25f793734340b89884101f0b6ca, type: 3}
+  - name: SFX_ButtonError
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 1a1d518944c43ba4eaec5edf7f53eacb, type: 3}
+  - name: SFX_ButtonHover
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 79dd152f51fc2594eaae04e6f2a32d9c, type: 3}
+  - name: SFX_ButtonClick
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 79dd152f51fc2594eaae04e6f2a32d9c, type: 3}
+  - name: SFX_TileHover
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: acf17b57577664540b38a1f6aa022933, type: 3}
+  - name: SFX_TileChoose
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: c0b44989e2979464b8b0cc8781447400, type: 3}
+  - name: SFX_Victory
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: ad3505ba3a21f954898525c0326d103e, type: 3}
+  - name: SFX_Lose
+    volume: 1
+    mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: a64a9082f0937a2419f18901b5f5a294, type: 3}

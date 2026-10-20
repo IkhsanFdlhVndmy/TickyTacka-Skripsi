@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce352f251fe044bba0c8b0579e864691, type: 3}
+  m_Name: Player Robo A401
+  m_EditorClassIdentifier: 
+  _name: Robo A401
+  _unitSide: 1
+  _prefab: {fileID: 5103909395877723810, guid: 5477ef04d8f25b54a8e2dc22485f1ecd, type: 3}
+  _moveRange: 5
+  _attackPattern: 0
+  _attackRange: 1
+  _attackDirection: 1

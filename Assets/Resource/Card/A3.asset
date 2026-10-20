@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db930adcaa0c78429b5cb2047da6f01, type: 3}
+  m_Name: A3
+  m_EditorClassIdentifier: 
+  cardSprite: {fileID: 4058025459245269310, guid: b69cbc53a2829b64387eefc853f1cd13, type: 3}
+  cardName: Robo A301
+  cardType: 2
+  UnitData: {fileID: 11400000, guid: a382ef618f57e7b40a66fd375845fd30, type: 2}

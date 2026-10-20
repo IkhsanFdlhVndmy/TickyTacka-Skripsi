@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db930adcaa0c78429b5cb2047da6f01, type: 3}
+  m_Name: D
+  m_EditorClassIdentifier: 
+  cardSprite: {fileID: -7474897090206559372, guid: 81721925ff14afe43ab11f1aacc9bc2e, type: 3}
+  cardName: Advance Robot
+  cardType: 9
+  UnitData: {fileID: 11400000, guid: 204cb2e9bdc2d8c469539aac4eab9828, type: 2}

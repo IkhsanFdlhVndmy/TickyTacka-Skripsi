@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce352f251fe044bba0c8b0579e864691, type: 3}
+  m_Name: Enemy Robo A201
+  m_EditorClassIdentifier: 
+  _name: Robo A201
+  _unitSide: 0
+  _prefab: {fileID: 4160254625369251348, guid: 350dd85f3ac34e94a87f771ccbb72640, type: 3}
+  _moveRange: 5
+  _attackPattern: 0
+  _attackRange: 1
+  _attackDirection: 3

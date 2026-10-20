@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db930adcaa0c78429b5cb2047da6f01, type: 3}
+  m_Name: B4
+  m_EditorClassIdentifier: 
+  cardSprite: {fileID: -4641275714127379593, guid: 549dcb690234bf84ebe13b5db2ed640a, type: 3}
+  cardName: Droid B402
+  cardType: 7
+  UnitData: {fileID: 11400000, guid: ea27eeecd4dc92d42aa1942f6b0537d8, type: 2}
