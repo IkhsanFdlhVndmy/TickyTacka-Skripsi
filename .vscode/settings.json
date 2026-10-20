@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "SelasarGameJam.sln"
+    "dotnet.defaultSolution": "TickyTacka-Skripsi.sln"
 }

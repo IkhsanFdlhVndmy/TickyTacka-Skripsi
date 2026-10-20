@@ -79,6 +79,12 @@ namespace TilemapLayer
 
         }
 
+        /// <summary>Cell tidak ditempati unit/item (barrel, robot hidup, maupun abu robot).</summary>
+        public bool IsEmptyCell(Vector3Int cell)
+        {
+            return !_units.ContainsKey(cell);
+        }
+
         public UnitModel GetUnit(Vector3 worldCoords)
         {
             Vector3Int baseCoords = _tilemap.WorldToCell(worldCoords);

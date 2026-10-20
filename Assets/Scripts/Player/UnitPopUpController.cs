@@ -1,4 +1,5 @@
 using System;
+using Input;
 using TilemapLayer;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -19,7 +20,11 @@ namespace Player
         private TurnBaseSystem _turnBaseSystem;
         private bool _alreadyMove;
         private bool _onMoveUnit;
+        private CanvasGroup _canvasGroup;
+        private RectTransform _rectTransform;
+        [SerializeField] private float _hoverAlphaWhileChoosingTile = 0.25f;
         public bool AlreadyMove => _alreadyMove;
+        public bool IsChoosingMoveTile => _unitMovePopup.IsChoosingTile;
         public bool OnMoveUnit => _onMoveUnit;
         public void SetAlreadyMove(bool value)
         {
@@ -33,6 +38,25 @@ namespace Player
         private void Awake()
         {
             _mainCamera = Camera.main;
+            _rectTransform = GetComponent<RectTransform>();
+            _canvasGroup = GetComponent<CanvasGroup>();
+            if (_canvasGroup == null) _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+
+        private void Update()
+        {
+            // Saat memilih petak tujuan move, popup tidak boleh menghalangi klik ke grid,
+            // dan dibuat transparan ketika kursor berada di atasnya agar petak di bawahnya terlihat.
+            bool choosingTile = _unitMovePopup.IsChoosingTile;
+            _canvasGroup.blocksRaycasts = !choosingTile;
+
+            bool hovered = false;
+            if (choosingTile)
+            {
+                Vector2 mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
+                hovered = RectTransformUtility.RectangleContainsScreenPoint(_rectTransform, mousePos, null);
+            }
+            _canvasGroup.alpha = hovered ? _hoverAlphaWhileChoosingTile : 1f;
         }
 
         private void Start()
@@ -46,6 +70,31 @@ namespace Player
         public void HidePopUp()
         {
             gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Klik di luar UI saat popup terbuka.
+        /// Sebelum move: aksi dibatalkan dan popup ditutup.
+        /// Setelah move (AlreadyMove): tidak bisa dibatalkan, harus pilih Attack/Stay;
+        /// konfirmasi attack yang terbuka hanya kembali ke menu Attack/Stay (sama seperti tombol "No").
+        /// </summary>
+        public void CancelByOutsideClick()
+        {
+            var tbs = TurnBaseSystem.Instance;
+            if (_alreadyMove)
+            {
+                if (_unitAttackPopup.gameObject.activeSelf) _unitAttackPopup.Cancel();
+                return;
+            }
+
+            tbs.OnMoveCanceled();
+            tbs.OnAttackCanceled();
+            _onMoveUnit = false;
+            HideAttackPanel();
+            HideMovePanel();
+            HideActionPanel();
+            HidePopUp();
+            tbs.SetActiveUnit(null);
         }
 
         private void InitializePopUp(UnitModel item, Vector3 position)

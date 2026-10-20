@@ -11,6 +11,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private Vector2 _originalPosition;
     private bool _isClicked;
     private bool _isMoving;
+    private Vector2 _slotPosition;
 
     private ChooseCard _chooseCard;
     private RecruitCard _recruitCard;
@@ -88,14 +89,17 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     private void moveBackChooseCard()
     {
+        _isMoving = true;
+        _rectTransform.DOKill();
         Sequence seq = DOTween.Sequence();
-        _chooseCard.RemoveCard(_rectTransform.anchoredPosition, cardSO);
+        _chooseCard.RemoveCard(_slotPosition, cardSO);
         transform.SetParent(_chooseCard.GetBottomPanel());
         seq.Join(_rectTransform.DOScale(2.5f, _duration));
         seq.Join(_rectTransform.DOAnchorPos(_originalPosition, _duration).SetEase(Ease.InOutQuad));
 
         seq.OnComplete(() =>
         {
+            _isMoving = false;
             _isClicked = false;
             _rectTransform.DOAnchorPosY(_originalPosition.y, _duration);
         });
@@ -103,14 +107,17 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     private void moveBackRecruitCard()
     {
+        _isMoving = true;
+        _rectTransform.DOKill();
         Sequence seq = DOTween.Sequence();
-        _recruitCard.RemoveCard(_rectTransform.anchoredPosition, cardSO);
+        _recruitCard.RemoveCard(_slotPosition, cardSO);
         transform.SetParent(_recruitCard.GetCenterPanel());
         seq.Join(_rectTransform.DOScale(3f, _duration));
         seq.Join(_rectTransform.DOAnchorPos(_originalPosition, _duration).SetEase(Ease.InOutQuad));
 
         seq.OnComplete(() =>
         {
+            _isMoving = false;
             _isClicked = false;
             _rectTransform.DOAnchorPosY(_originalPosition.y, _duration);
         });
@@ -119,7 +126,10 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public void OnPointerClick(PointerEventData eventData)
     {
         AudioManager.Instance.PlaySound(SoundType.SFX_CardPick);
-        if (_isClicked && !_isMoving )
+        if (_isMoving)
+            return;
+
+        if (_isClicked)
         {
             if (_isChoose)
             {
@@ -157,6 +167,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private void MoveChooseCard()
     {
         Vector2 targetPos = _chooseCard.GetAvailablePosition();
+        _slotPosition = targetPos;
+        _rectTransform.DOKill();
         if (transform.localPosition.y != _originalPosition.y + _hoverHeight)
         {
             _rectTransform
@@ -195,6 +207,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     private void MoveRecruitCard()
     {
         Vector2 targetPos = _recruitCard.GetAvailablePosition();
+        _slotPosition = targetPos;
+        _rectTransform.DOKill();
         if (transform.localPosition.y != _originalPosition.y + _hoverHeight)
         {
             _rectTransform

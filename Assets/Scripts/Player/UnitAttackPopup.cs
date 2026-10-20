@@ -33,6 +33,12 @@ namespace Player
             _turnBaseSystem.UIManagerBattle.UnitController.SetAlreadyMove(false);
         }
 
+        /// <summary>Sama seperti menekan "No": batal attack dan kembali ke menu aksi.</summary>
+        public void Cancel()
+        {
+            OnConfirmNo();
+        }
+
         private void OnConfirmNo()
         {
             HidePanel();

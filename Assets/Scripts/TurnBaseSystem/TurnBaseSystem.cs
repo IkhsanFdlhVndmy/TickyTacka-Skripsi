@@ -48,6 +48,7 @@ public class TurnBaseSystem : MonoBehaviour
     private Vector3 _pendingMove;
     private bool _confirmMove;
     private AudioManager _audioManager;
+    private UnitModel _hoveredUnit;
     private void Awake()
     {
         _players = new List<UnitData>();
@@ -85,6 +86,38 @@ public class TurnBaseSystem : MonoBehaviour
             InitializeEnemy();
         }
     }
+
+    private void Update()
+    {
+        UpdateHoverPreview();
+    }
+
+    // Hover preview: range move (hijau) & attack (merah) robot player/enemy di bawah kursor.
+    // Hanya visual; aktif saat giliran player dan tidak ada popup aksi yang terbuka.
+    private void UpdateHoverPreview()
+    {
+        UnitModel hovered = null;
+        if (CanShowHoverPreview())
+        {
+            var mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
+            if (!IsPointerOverUI(mousePos))
+            {
+                var unit = _battleBoard.GetUnit(_mainCamera.ScreenToWorldPoint(mousePos));
+                if (unit != null && unit.UnitData && !unit.IsDead) hovered = unit;
+            }
+        }
+
+        if (hovered == _hoveredUnit) return;
+        _hoveredUnit = hovered;
+        if (hovered == null) _battleArea.HideHoverPreview();
+        else _battleArea.ShowHoverPreview(hovered);
+    }
+
+    private bool CanShowHoverPreview()
+        => BattleState != null
+           && BattleState.CurrentState == PlayerTurnState
+           && !_confirmMove
+           && !_uIManagerBattle.UnitController.gameObject.activeSelf;
 
     private void OnEnable()
     {
@@ -245,10 +278,23 @@ public class TurnBaseSystem : MonoBehaviour
 
         _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
         if (IsPointerOverUI(_mousePos)) return;
-        if (BattleState.CurrentState != PlayerTurnState) return;
+        if (BattleState == null || BattleState.CurrentState != PlayerTurnState) return;
         var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
+
+        // Popup aksi terbuka: klik di luar UI = batal (kecuali sedang memilih petak move yang valid)
+        var popUp = _uIManagerBattle.UnitController;
+        if (popUp.gameObject.activeSelf)
+        {
+            bool pickingMoveTile = popUp.IsChoosingMoveTile && _activeUnit != null && !_confirmMove && IsValid(worldPosition);
+            if (!pickingMoveTile)
+            {
+                popUp.CancelByOutsideClick();
+                return;
+            }
+        }
+
         UnitModel item = _battleBoard.GetUnit(worldPosition);
-        if (item != null && item.UnitData)
+        if (item != null && item.UnitData && !item.IsDead)
         {
             var isPlayer = item?.UnitData.UnitSide == UnitSide.Player;
             var unitController = _uIManagerBattle.UnitController;
@@ -379,6 +425,23 @@ public class TurnBaseSystem : MonoBehaviour
     {
         return _battleBoard.GetUnits(side, true);
     }
+
+    /// <summary>
+    /// Cell tujuan move yang legal untuk unit, dengan aturan yang sama seperti player:
+    /// terjangkau dalam MoveRange lewat tile battle area (bukan obstacle) dan tidak ditempati unit/barrel.
+    /// </summary>
+    public HashSet<Vector3Int> GetLegalMoveCells(UnitModel unit)
+    {
+        var cells = _battleArea.GetReachableCells(unit.Coordinates, unit.UnitData.MoveRange);
+        cells.RemoveWhere(cell => cell == unit.Coordinates || !_battleBoard.IsEmptyCell(cell));
+        return cells;
+    }
+
+    public bool IsWalkableCell(Vector3Int cell)
+        => _battleArea.IsWalkableCell(cell);
+
+    public bool IsEmptyCell(Vector3Int cell)
+        => _battleBoard.IsEmptyCell(cell);
 
     public void MoveEnemy(UnitModel enemy, Vector3 worldPosition)
     {

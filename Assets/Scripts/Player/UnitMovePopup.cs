@@ -16,6 +16,7 @@ namespace Player
         private UnitModel _unitModel;
         private UnitPopUpController _unitPopUpController;
         private TurnBaseSystem _turnBaseSystem;
+        public bool IsChoosingTile => _movePopup.activeSelf;
 
         public void Show()
         {
