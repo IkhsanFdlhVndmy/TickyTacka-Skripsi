@@ -57,28 +57,25 @@ namespace Turnbase_System
             var enemy = action.Unit;
             tbs.SetActiveUnit(enemy);
 
-            if (action.TryAttack)
+            if (action.HasMove)
             {
                 tbs.ShowPlayerMove(enemy);
                 await UniTask.Delay(500);
-                if (action.HasMove)
-                {
-                    var worldPos = tbs.CellToWorld(action.MoveCell) + new Vector3(0.5f, 0.5f);
-                    tbs.MoveEnemy(enemy, worldPos);
-                    await UniTask.Delay(300);
-                    enemy = tbs.ActiveUnit; // update referensi setelah move
-                }
+                var worldPos = tbs.CellToWorld(action.MoveCell) + new Vector3(0.5f, 0.5f);
+                tbs.MoveEnemy(enemy, worldPos);
+                await UniTask.Delay(300);
+                enemy = tbs.ActiveUnit; // update referensi setelah move
                 tbs.HidePlayerMove();
+            }
 
-                // Lakukan attack sekali jika target sudah dalam pola attack
-                if (tbs.IsInAttackRange(enemy, action.Target))
-                {
-                    tbs.ShowPlayerAttack(enemy);
-                    await UniTask.Delay(400);
-                    tbs.PerformAttack();
-                    await UniTask.Delay(500);
-                    tbs.HidePlayerAttack();
-                }
+            // Attack sekali jika target sudah dalam pola ledakan
+            if (action.TryAttack && tbs.IsInAttackRange(enemy, action.Target))
+            {
+                tbs.ShowPlayerAttack(enemy);
+                await UniTask.Delay(400);
+                tbs.PerformAttack();
+                await UniTask.Delay(500);
+                tbs.HidePlayerAttack();
             }
 
             // 3. Cek hasil akhir giliran

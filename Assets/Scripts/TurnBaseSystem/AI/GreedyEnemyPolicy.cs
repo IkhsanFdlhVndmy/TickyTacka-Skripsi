@@ -7,8 +7,13 @@ using UnityEngine;
 namespace Turnbase_System.AI
 {
     /// <summary>
-    /// Policy heuristik bawaan (perilaku enemy sebelumnya), sekarang hanya memilih cell dari
-    /// TurnBaseSystem.GetLegalMoveCells sehingga tidak bisa menginjak obstacle, barrel, atau unit lain.
+    /// Baseline AI lama (greedy) yang menjadi pembanding penelitian. Keterbatasannya SENGAJA dipertahankan:
+    /// - hanya mengejar pasangan (enemy, player) dengan jarak terdekat, tanpa memikirkan balasan pemain;
+    /// - hanya melangkah 1 petak per giliran (kecuali sirkulasi bawaan saat sudah berdampingan);
+    /// - tidak memperhitungkan friendly fire;
+    /// - tidak memanfaatkan barrel dan tidak pernah menunggu posisi yang lebih baik.
+    /// Perbaikan yang hanya bersifat bug: tidak menginjak obstacle/barrel/unit (hanya cell legal),
+    /// memutari penghalang saat melangkah, dan langsung meledak jika target sudah dalam pola ledakan.
     /// </summary>
     public class GreedyEnemyPolicy : IEnemyPolicy
     {
@@ -40,10 +45,6 @@ namespace Turnbase_System.AI
 
             if (enemy == null || target == null) return EnemyAction.None;
 
-            // Prioritas: jika ada enemy yang bisa meledakkan barrel dan ledakannya mengenai player, lakukan itu
-            if (TryChooseBarrelAttack(tbs, enemies, out var barrelAction))
-                return barrelAction;
-
             var offsets = UnitAttackCalculate.GetOffsets(
                 enemy.UnitData.AttackPattern,
                 enemy.UnitData.Range,
@@ -52,10 +53,14 @@ namespace Turnbase_System.AI
 
             bool adjacent = Manhattan(enemy.Coordinates, target.Coordinates) == 1;
             bool canAttackNow = offsets.Any(off => enemy.Coordinates + off == target.Coordinates);
-            var legalCells = tbs.GetLegalMoveCells(enemy);
 
+            // Target sudah dalam pola ledakan: langsung meledak (tanpa cek friendly fire)
+            if (canAttackNow)
+                return new EnemyAction(enemy, target, null, tryAttack: true, type: EnemyActionType.DirectAttack);
+
+            var legalCells = tbs.GetLegalMoveCells(enemy);
             Vector3Int? moveCell = null;
-            if (adjacent && !canAttackNow)
+            if (adjacent)
             {
                 // Sirkulasi: pindah ke posisi berlawanan offset agar target masuk pola attack
                 foreach (var off in offsets)
@@ -68,7 +73,7 @@ namespace Turnbase_System.AI
                     }
                 }
             }
-            else if (!canAttackNow)
+            else
             {
                 // Satu langkah mendekat; jika langkah lurus terhalang obstacle/unit, cari jalan memutar
                 // Langkah lurus hanya dipakai jika benar-benar memperpendek jalur (tidak masuk kantong buntu).
@@ -79,54 +84,8 @@ namespace Turnbase_System.AI
                     moveCell = GetDetourStep(tbs, enemy.Coordinates, target.Coordinates, legalCells);
             }
 
-            // Perilaku lama dipertahankan: attack hanya dicoba jika di awal giliran belum bisa attack
-            return new EnemyAction(enemy, target, moveCell, tryAttack: !canAttackNow);
-        }
-
-        /// <summary>
-        /// Cari (enemy, posisi) terbaik untuk meng-attack barrel: dari posisi sekarang atau setelah pindah
-        /// ke cell legal. Hanya dipilih jika ledakan mengenai minimal 1 player dan player yang mati
-        /// lebih banyak daripada enemy lain yang ikut terkena. Seri: pilih yang perpindahannya paling pendek.
-        /// </summary>
-        private static bool TryChooseBarrelAttack(TurnBaseSystem tbs, List<UnitModel> enemies, out EnemyAction action)
-        {
-            action = EnemyAction.None;
-            int bestScore = 0, bestPlayers = 0, bestMoveCost = int.MaxValue;
-
-            foreach (var e in enemies)
-            {
-                if (e.IsDead) continue;
-
-                var candidates = new List<Vector3Int> { e.Coordinates };
-                candidates.AddRange(tbs.GetLegalMoveCells(e));
-
-                foreach (var cell in candidates)
-                {
-                    var outcome = AttackSimulator.Predict(tbs, e, cell);
-                    if (outcome.BarrelsTriggered == 0 || outcome.PlayersKilled == 0) continue;
-
-                    int score = outcome.PlayersKilled - outcome.EnemiesKilled;
-                    if (score <= 0) continue;
-
-                    int moveCost = Manhattan(e.Coordinates, cell);
-                    bool better = score > bestScore
-                                  || (score == bestScore && outcome.PlayersKilled > bestPlayers)
-                                  || (score == bestScore && outcome.PlayersKilled == bestPlayers && moveCost < bestMoveCost);
-                    if (!better) continue;
-
-                    bestScore = score;
-                    bestPlayers = outcome.PlayersKilled;
-                    bestMoveCost = moveCost;
-                    Vector3Int? moveCell = cell == e.Coordinates ? (Vector3Int?)null : cell;
-                    action = new EnemyAction(e, outcome.FirstBarrel, moveCell, tryAttack: true,
-                        type: EnemyActionType.BarrelAttack);
-                }
-            }
-
-            if (!action.IsNone)
-                Debug.Log($"[EnemyAI] Barrel attack oleh {action.Unit.UnitData.Name} " +
-                          $"(player terkena: {bestPlayers}, skor: {bestScore})");
-            return !action.IsNone;
+            // Setelah melangkah, meledak jika target masuk pola ledakan (dicek saat eksekusi)
+            return new EnemyAction(enemy, target, moveCell, tryAttack: true);
         }
 
         private static Vector3Int GetStepTowards(Vector3Int from, Vector3Int to)

@@ -5,8 +5,8 @@ namespace Turnbase_System.AI
 {
     public enum EnemyActionType
     {
-        Approach,      // heuristik lama: mendekat/memutar lalu attack player jika dalam pola
-        BarrelAttack   // attack barrel agar ledakannya mengenai player
+        Approach,      // mendekat 1 langkah ke player terdekat, lalu meledak jika target masuk pola
+        DirectAttack   // target sudah dalam pola ledakan sejak awal giliran: langsung meledak
     }
 
     /// <summary>
