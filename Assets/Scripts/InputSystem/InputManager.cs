@@ -12,7 +12,19 @@ namespace Input
         protected override void Awake()
         {
             base.Awake();
+            // Duplikat (dihancurkan oleh base.Awake) tidak perlu membuat InputActions sendiri
+            if (Instance != this) return;
             InitializedManager();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            // Matikan & lepas InputActions agar tidak bocor (assert "Player.Disable() has not been called")
+            if (_inputActions == null) return;
+            _inputActions.Player.Disable();
+            _inputActions.Dispose();
+            _inputActions = null;
         }
 
         private void InitializedManager()

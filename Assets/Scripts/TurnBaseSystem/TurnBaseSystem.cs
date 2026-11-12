@@ -121,12 +121,17 @@ public class TurnBaseSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        InputManager.Instance.PlayerInput.Performed.OnDown += OnLeftMouseClicked;
+        var input = InputManager.Instance;
+        if (input == null || input.PlayerInput == null) return;
+        input.PlayerInput.Performed.OnDown += OnLeftMouseClicked;
     }
 
     private void OnDisable()
     {
-        InputManager.Instance.PlayerInput.Performed.OnDown -= OnLeftMouseClicked;
+        // Saat keluar Play/ganti scene, InputManager bisa sudah dihancurkan lebih dulu
+        var input = InputManager.Instance;
+        if (input == null || input.PlayerInput == null) return;
+        input.PlayerInput.Performed.OnDown -= OnLeftMouseClicked;
     }
 
     public void SetBattleResult(BattleResult result)

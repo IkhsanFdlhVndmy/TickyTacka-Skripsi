@@ -1,9 +1,34 @@
  using System;
  using UnityEngine;
 
+ /// <summary>
+ /// Penanda sesi Play. Dinaikkan setiap kali Play dimulai, agar state static singleton di-reset
+ /// walaupun Domain Reload dimatikan (Enter Play Mode Options).
+ /// </summary>
+ public static class PersistentSingletonSession
+ {
+     public static int Id { get; private set; }
+
+     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+     private static void OnPlaySessionStart()
+     {
+         Id++;
+     }
+ }
+
  public class PersistentSingleton<T> : MonoBehaviour where T : Component  
     {
         private static T _instance;
+        private static int _sessionId = -1;
+
+        // Reset state static dari sesi Play sebelumnya (Domain Reload dimatikan)
+        private static void EnsureCurrentSession()
+        {
+            if (_sessionId == PersistentSingletonSession.Id) return;
+            _sessionId = PersistentSingletonSession.Id;
+            _instance = null;
+            _isDestroyed = false;
+        }
 
         public static T Instance
         {
@@ -15,6 +40,7 @@
                     throw new UnauthorizedAccessException("Accessing PersistentSingleton while In Editor is Illegal");
                 }
 #endif
+                EnsureCurrentSession();
                 if (_instance == null)
                 {
                     if (_isDestroyed) return null;
@@ -59,12 +85,14 @@
 
         protected virtual void OnDestroy()
         {
+            EnsureCurrentSession();
             if (this != _instance) return;
             _isDestroyed = true;
         }
 
         protected virtual void Awake()
         {
+            EnsureCurrentSession();
             T thisInstance = this.GetComponent<T>();
 
             if (_instance == null)
